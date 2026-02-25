@@ -1001,6 +1001,46 @@
             animation: pulse 1.5s infinite;
         }
 
+        .github-note {
+            background: #1f2937;
+            border-radius: 60px;
+            padding: 15px 25px;
+            margin: 20px 0;
+            border: 2px solid #fbbf24;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .github-note i {
+            color: #fbbf24;
+            font-size: 1.5rem;
+        }
+
+        .github-note span {
+            color: #e5e7eb;
+            font-size: 1rem;
+        }
+
+        .github-btn {
+            background: #24292e;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 40px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+
+        .github-btn:hover {
+            background: #000;
+            transform: scale(1.05);
+        }
+
         @keyframes pulse {
             0% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.5; transform: scale(1.2); }
@@ -1065,7 +1105,7 @@
             <div>
                 <span class="header-title">
                     <i class="fas fa-trophy"></i>
-                    جام رمضان اسفرورین (1404)
+                    لیگ قهرمانان اروپا
                 </span>
             </div>
             <div>
@@ -1093,8 +1133,19 @@
         <!-- اعلان حالت نمایش برای کاربر عادی -->
         <div id="readOnlyNotice" style="text-align: center; margin-bottom: 20px; display: block;">
             <span class="edit-notice">
-                <i class="fas fa-eye"></i> کاری از سید محمدحسین افراشته
+                <i class="fas fa-eye"></i> حالت نمایش - برای ویرایش وارد شوید
             </span>
+        </div>
+
+        <!-- توضیحات گیت‌هاب -->
+        <div class="github-note">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fab fa-github"></i>
+                <span>این برنامه روی گیت‌هاب Pages اجرا می‌شود. اطلاعات شما در مرورگر ذخیره می‌شود و با بستن صفحه پاک نمی‌شود.</span>
+            </div>
+            <a href="#" class="github-btn" onclick="exportToFile()">
+                <i class="fas fa-download"></i> ذخیره پشتیبان
+            </a>
         </div>
 
         <!-- آمار -->
@@ -1177,7 +1228,7 @@
 
         <div style="display: flex; justify-content: center; gap: 15px; margin: 20px 0;">
             <span class="auto-save-badge">
-                <i class="fas fa-save"></i> ذخیره خودکار فعال
+                <i class="fas fa-save"></i> ذخیره خودکار در مرورگر
                 <span class="save-indicator"></span>
             </span>
             <span class="auto-save-badge" style="background: #3b82f6;">
@@ -1186,6 +1237,7 @@
         </div>
 
         <input type="file" id="excel-upload" accept=".xlsx, .xls, .csv" style="display: none;">
+        <input type="file" id="json-upload" accept=".json" style="display: none;">
     </div>
 
     <script>
@@ -1327,6 +1379,31 @@
             closeChangePasswordModal();
         }
 
+        // ==================== توابع ذخیره پشتیبان ====================
+        window.exportToFile = function() {
+            const data = {
+                groups: groups,
+                matches: matches,
+                knockoutMatches: knockoutMatches,
+                playersData: playersData,
+                teamManagers: teamManagers,
+                description: description,
+                adminPassword: adminPassword,
+                lastUpdated: new Date().toISOString()
+            };
+
+            const jsonData = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `لیگ-قهرمانان-پشتیبان.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        };
+
         // ==================== بارگذاری از localStorage ====================
         function loadFromStorage() {
             const saved = localStorage.getItem('championsLeagueData');
@@ -1394,7 +1471,7 @@
             }
         }
 
-        // ==================== ذخیره خودکار ====================
+        // ==================== ذخیره خودکار در localStorage ====================
         function autoSave() {
             const data = {
                 groups: groups,
